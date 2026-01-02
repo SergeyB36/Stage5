@@ -14,7 +14,8 @@ dependencies = [
     "dotenv (>=0.9.9,<0.10.0)",
     "psycopg2-binary (>=2.9.11,<3.0.0)",
     "psycopg2 (>=2.9.11,<3.0.0)",
-    "redis (>=7.1.0,<8.0.0)"
+    "redis (>=7.1.0,<8.0.0)",
+    "djangorestframework (>=3.16.1,<4.0.0)"
 ]
 
 
