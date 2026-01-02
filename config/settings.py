@@ -101,7 +101,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-TATIC_URL = "static/"
+STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 MEDIA_URL = "/media/"
@@ -126,10 +126,10 @@ AUTH_USER_MODEL = "users.CustomUser"
 # DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 #Закомментировать или удалить для проверки на реальном сервере следующие 4 строки
-EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-EMAIL_FILE_PATH = os.path.join(BASE_DIR, "tmp", "django-emails")
-EMAIL_HOST_USER = ""
-EMAIL_HOST_PASSWORD = ""
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# EMAIL_FILE_PATH = os.path.join(BASE_DIR, "tmp", "django-emails")
+# EMAIL_HOST_USER = ""
+# EMAIL_HOST_PASSWORD = ""
 
 # CACHES_ENABLED = True
 # if CACHES_ENABLED:
