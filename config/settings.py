@@ -58,7 +58,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -89,7 +88,6 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
-
 
 
 LANGUAGE_CODE = "ru"
@@ -125,7 +123,7 @@ AUTH_USER_MODEL = "users.CustomUser"
 # EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 # DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
-#Закомментировать или удалить для проверки на реальном сервере следующие 4 строки
+# Закомментировать или удалить для проверки на реальном сервере следующие 4 строки
 # EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 # EMAIL_FILE_PATH = os.path.join(BASE_DIR, "tmp", "django-emails")
 # EMAIL_HOST_USER = ""

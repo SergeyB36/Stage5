@@ -8,13 +8,7 @@ class Lesson(models.Model):
     description = models.TextField(blank=False, verbose_name="Описание")
     avatar = models.ImageField(upload_to="course/image", blank=True, null=True, verbose_name="Превью")
     url = models.URLField()
-    course = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE,
-        related_name='lessons',
-        verbose_name="Курс"
-    )
-
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons", verbose_name="Курс")
 
     class Meta:
         verbose_name = "Урок"
