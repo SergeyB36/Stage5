@@ -5,7 +5,7 @@ from rest_framework.routers import SimpleRouter
 from config import settings
 from study.views import CourseViewSet
 from study.apps import StudyConfig
-from lesson.views import (
+from study.views import (
     LessonCreateAPIView,
     LessonDestroyAPIView,
     LessonListAPIView,
