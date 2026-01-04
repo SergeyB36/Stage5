@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from study.models import Lesson, Course
+
 
 class CustomUser(AbstractUser):
     username = None
@@ -19,3 +21,62 @@ class CustomUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Payments(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user", verbose_name="Пользователь")
+    payment_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Сумма оплаты"
+    )
+    TYPE_PAYMENT_CHOICES = [
+        ("cash", "Наличные"),
+        ("on_line", "Перевод на счет"),
+    ]
+    type_payment = models.CharField(max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="paid_object", verbose_name="Курс")
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="paid_object", verbose_name="Урок")
+    OBJECT_PAYMENT_CHOICES = [
+        ("course", "Курс"),
+        ("lesson", "Урок"),
+    ]
+    object_payment = models.CharField(
+        max_length=20,
+        choices=OBJECT_PAYMENT_CHOICES,
+        verbose_name="Тип объекта оплаты"
+    )
+
+    class Meta:
+        verbose_name = "Платеж"
+        verbose_name_plural = "Платежи"
+        ordering = ("-payment_date",)
+
+    def __str__(self):
+        if self.course:
+            return f"{self.user} - {self.course.name} - {self.amount}"
+        elif self.lesson:
+            return f"{self.user} - {self.lesson.name} - {self.amount}"
+        return f"{self.user} - {self.amount}"
+
+    def clean(self):
+        """Валидация модели"""
+        from django.core.exceptions import ValidationError
+
+        # Проверяем, что выбран только один объект
+        if self.course and self.lesson:
+            raise ValidationError("Выберите только один объект: курс ИЛИ урок")
+
+        if not self.course and not self.lesson:
+            raise ValidationError("Выберите объект для оплаты: курс ИЛИ урок")
+
+        # Синхронизируем тип объекта с выбранным полем
+        if self.course:
+            self.object_payment = 'course'
+        elif self.lesson:
+            self.object_payment = 'lesson'
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
