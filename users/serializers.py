@@ -25,8 +25,6 @@ class PaymentsCreateSerializer(ModelSerializer):
         )
 
     def create(self, validated_data):
-        # Можно добавить дополнительную логику при создании
-        # Например, автоматически установить дату оплаты
         from django.utils import timezone
         validated_data['payment_date'] = timezone.now()
 
