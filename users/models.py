@@ -26,6 +26,8 @@ class CustomUser(AbstractUser):
 class Payments(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user", verbose_name="Пользователь")
     payment_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Курс")
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Урок")
     amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
@@ -36,8 +38,6 @@ class Payments(models.Model):
         ("on_line", "Перевод на счет"),
     ]
     type_payment = models.CharField(max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="paid_object", verbose_name="Курс")
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="paid_object", verbose_name="Урок")
     OBJECT_PAYMENT_CHOICES = [
         ("course", "Курс"),
         ("lesson", "Урок"),
