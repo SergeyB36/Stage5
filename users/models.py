@@ -1,7 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from study.models import Lesson, Course
+from study.models import Course, Lesson
 
 
 class CustomUser(AbstractUser):
@@ -26,27 +26,25 @@ class CustomUser(AbstractUser):
 class Payments(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="user", verbose_name="Пользователь")
     payment_date = models.DateField(verbose_name="Дата оплаты", auto_now_add=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Курс")
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Урок")
-    amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name="Сумма оплаты"
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Курс"
     )
+    lesson = models.ForeignKey(
+        Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Урок"
+    )
+    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма оплаты")
     TYPE_PAYMENT_CHOICES = [
         ("cash", "Наличные"),
         ("on_line", "Перевод на счет"),
     ]
-    type_payment = models.CharField(max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты")
+    type_payment = models.CharField(
+        max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты"
+    )
     OBJECT_PAYMENT_CHOICES = [
         ("course", "Курс"),
         ("lesson", "Урок"),
     ]
-    object_payment = models.CharField(
-        max_length=20,
-        choices=OBJECT_PAYMENT_CHOICES,
-        verbose_name="Тип объекта оплаты"
-    )
+    object_payment = models.CharField(max_length=20, choices=OBJECT_PAYMENT_CHOICES, verbose_name="Тип объекта оплаты")
 
     class Meta:
         verbose_name = "Платеж"
@@ -73,9 +71,9 @@ class Payments(models.Model):
 
         # Синхронизируем тип объекта с выбранным полем
         if self.course:
-            self.object_payment = 'course'
+            self.object_payment = "course"
         elif self.lesson:
-            self.object_payment = 'lesson'
+            self.object_payment = "lesson"
 
     def save(self, *args, **kwargs):
         self.full_clean()

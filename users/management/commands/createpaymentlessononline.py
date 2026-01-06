@@ -1,8 +1,9 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 
-from users.models import Payments, CustomUser
 from study.models import Lesson
+from users.models import CustomUser, Payments
+
 
 class Command(BaseCommand):
 
@@ -15,7 +16,7 @@ class Command(BaseCommand):
             amount=2000,
             object_payment="lesson",
             type_payment="on_line",
-            lesson=lesson
+            lesson=lesson,
         )
         payment.save()
         print(f"Платеж {payment} успешно создан")

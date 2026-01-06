@@ -2,9 +2,12 @@ from django.conf.urls.static import static
 from django.urls import path
 
 from config import settings
-
 from users.apps import UsersConfig
-from users.views import PaymentsCreateAPIView, PaymentsRetrieveAPIView, PaymentsListAPIView
+from users.views import (
+    PaymentsCreateAPIView,
+    PaymentsListAPIView,
+    PaymentsRetrieveAPIView,
+)
 
 app_name = UsersConfig.name
 
