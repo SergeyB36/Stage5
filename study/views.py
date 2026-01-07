@@ -5,7 +5,6 @@ from rest_framework.generics import (
     RetrieveAPIView,
     UpdateAPIView,
 )
-
 from rest_framework.viewsets import ModelViewSet
 
 from study.models import Course, Lesson
@@ -35,6 +34,7 @@ class LessonUpdateAPIView(UpdateAPIView):
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
 
 class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()

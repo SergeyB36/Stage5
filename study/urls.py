@@ -3,9 +3,9 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from config import settings
-from study.views import CourseViewSet
 from study.apps import StudyConfig
 from study.views import (
+    CourseViewSet,
     LessonCreateAPIView,
     LessonDestroyAPIView,
     LessonListAPIView,
