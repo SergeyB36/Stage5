@@ -17,7 +17,6 @@ class PaymentsCreateSerializer(ModelSerializer):
         fields = (
             "user",
             "payment_amount",
-            "type_payment",
             "course",
             "lesson",
             "payment_method",

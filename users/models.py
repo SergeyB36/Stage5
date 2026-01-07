@@ -40,11 +40,6 @@ class Payments(models.Model):
     type_payment = models.CharField(
         max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты"
     )
-    OBJECT_PAYMENT_CHOICES = [
-        ("course", "Курс"),
-        ("lesson", "Урок"),
-    ]
-    object_payment = models.CharField(max_length=20, choices=OBJECT_PAYMENT_CHOICES, verbose_name="Тип объекта оплаты")
 
     class Meta:
         verbose_name = "Платеж"
@@ -68,12 +63,6 @@ class Payments(models.Model):
 
         if not self.course and not self.lesson:
             raise ValidationError("Выберите объект для оплаты: курс ИЛИ урок")
-
-        # Синхронизируем тип объекта с выбранным полем
-        if self.course:
-            self.object_payment = "course"
-        elif self.lesson:
-            self.object_payment = "lesson"
 
     def save(self, *args, **kwargs):
         self.full_clean()

@@ -14,7 +14,6 @@ class Command(BaseCommand):
             user=user,
             payment_date=timezone.now(),
             amount=2000,
-            object_payment="course",
             type_payment="cash",
             course=course,
         )
