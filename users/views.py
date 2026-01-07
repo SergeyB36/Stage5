@@ -2,8 +2,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.generics import CreateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 
-from users.models import Payments, CustomUser
-from users.serializers import PaymentsSerializer, CustomUserSerializer
+from users.models import CustomUser, Payments
+from users.serializers import CustomUserSerializer, PaymentsSerializer
 
 
 class PaymentsCreateAPIView(CreateAPIView):
