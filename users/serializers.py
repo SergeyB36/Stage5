@@ -1,6 +1,14 @@
 from rest_framework.serializers import ModelSerializer
 
-from users.models import Payments
+from users.models import Payments, CustomUser
+
+
+class CustomUserSerializer(ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = "__all__"
+
 
 
 class PaymentsSerializer(ModelSerializer):
@@ -11,7 +19,6 @@ class PaymentsSerializer(ModelSerializer):
 
 
 class PaymentsCreateSerializer(ModelSerializer):
-    # Только необходимые поля для создания
     class Meta:
         model = Payments
         fields = (
