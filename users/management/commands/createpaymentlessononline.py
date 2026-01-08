@@ -18,4 +18,4 @@ class Command(BaseCommand):
             lesson=lesson,
         )
         payment.save()
-        print(f"Платеж {payment} успешно создан")
+        self.stdout.write(self.style.SUCCESS(f"Платеж {payment} успешно создан"))

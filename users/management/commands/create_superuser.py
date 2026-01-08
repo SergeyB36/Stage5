@@ -11,5 +11,5 @@ class Command(BaseCommand):
         user.is_staff = True
         user.is_superuser = True
         user.save()
-        print(f"Пользователь {user} с правами superuser успешно создан")
-        print(f"Login: '{user}'\nPassword: '1234'")
+        self.stdout.write(self.style.SUCCESS(f"Пользователь {user} с правами superuser успешно создан"))
+        self.stdout.write(self.style.SUCCESS(f"Login: '{user}'\nPassword: '1234'"))

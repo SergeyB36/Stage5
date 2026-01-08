@@ -8,9 +8,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         course = Course.objects.create(name="Кройка и шитье", description="Курс кройки и шитья")
         course.save()
-        print(f"Курс '{course}' успешно создан")
+        self.stdout.write(self.style.SUCCESS(f"Курс '{course}' успешно создан"))
         lesson = Lesson.objects.create(
             name="Иголка", description="Иголка. Основные параметры, методы и функции", course=course
         )
         lesson.save()
-        print(f"К курсу '{course} 'успешно добавлен урок '{lesson}'")
+        self.stdout.write(self.style.SUCCESS(f"К курсу '{course} 'успешно добавлен урок '{lesson}'"))
