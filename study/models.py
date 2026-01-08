@@ -1,10 +1,16 @@
 from django.db import models
 
+from config import settings
+
 
 class Course(models.Model):
     name = models.CharField(max_length=300, verbose_name="Название курса", help_text="Название курса")
     avatar = models.ImageField(upload_to="course/image", blank=True, null=True, verbose_name="Превью")
     description = models.TextField(blank=False, verbose_name="Описание")
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="Владелец ресурса", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     class Meta:
         verbose_name = "Курс"
@@ -23,6 +29,9 @@ class Lesson(models.Model):
         null=True,
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="lessons", verbose_name="Курс")
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL, verbose_name="Владелец ресурса", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     class Meta:
         verbose_name = "Урок"
