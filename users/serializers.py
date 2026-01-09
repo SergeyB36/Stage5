@@ -50,14 +50,14 @@ class PaymentsCreateSerializer(ModelSerializer):
 
 
 class SubscriptionSerializer(ModelSerializer):
-    course_name = serializers.CharField(source='course.name', read_only=True)
-    user_email = serializers.CharField(source='user.email', read_only=True)
+    course_name = serializers.CharField(source="course.name", read_only=True)
+    user_email = serializers.CharField(source="user.email", read_only=True)
 
     class Meta:
         model = Subscription
         fields = (
-            'id',
-            'user_email',
-            'course_name',
-            'is_active',
+            "id",
+            "user_email",
+            "course_name",
+            "is_active",
         )

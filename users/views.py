@@ -3,7 +3,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.generics import (
     CreateAPIView,
-    DestroyAPIView,
     ListAPIView,
     RetrieveAPIView,
 )
@@ -11,7 +10,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from study.models import Course
-from study.permissions import CanCreatePermission, IsOwner
+from study.permissions import CanCreatePermission
 from users.models import CustomUser, Payments, Subscription
 from users.serializers import (
     CustomUserSerializer,
@@ -54,7 +53,7 @@ class SubscriptionCreateAPIView(CreateAPIView):
     permission_classes = [CanCreatePermission]
 
     def perform_create(self, serializer):
-        subscription = serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user)
 
     def post(self, *args, **kwargs):
         user = self.request.user
@@ -83,15 +82,3 @@ class SubscriptionCreateAPIView(CreateAPIView):
             {"message": message},
             status=http_status,
         )
-
-
-class SubscriptionDestroyAPIView(DestroyAPIView):
-    permission_classes = [IsOwner]
-
-    def delete(self, request, pk):
-        subscription = get_object_or_404(Subscription, id=pk, user=request.user)
-
-        subscription.is_active = False
-        subscription.save()
-
-        return Response({"message": "Подписка успешно отменена"}, status=status.HTTP_200_OK)

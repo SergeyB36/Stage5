@@ -12,7 +12,8 @@ from users.views import (
     CustomUserCreateAPIView,
     PaymentsCreateAPIView,
     PaymentsListAPIView,
-    PaymentsRetrieveAPIView, SubscriptionCreateAPIView, SubscriptionDestroyAPIView,
+    PaymentsRetrieveAPIView,
+    SubscriptionCreateAPIView,
 )
 
 app_name = UsersConfig.name
@@ -26,7 +27,6 @@ urlpatterns = [
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
     path("register/", CustomUserCreateAPIView.as_view(), name="register"),
     path("subscription/create/", SubscriptionCreateAPIView.as_view(), name="subscription-create"),
-    path("subscription/<int:pk>/delete/", SubscriptionDestroyAPIView.as_view(), name="subscription-delete"),
 ]
 
 

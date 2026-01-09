@@ -20,7 +20,7 @@ class LessonCreateAPIView(CreateAPIView):
     permission_classes = [CanCreatePermission]
 
     def perform_create(self, serializer):
-        lesson = serializer.save(owner=self.request.user)
+        serializer.save(owner=self.request.user)
 
 
 class LessonListAPIView(ListAPIView):

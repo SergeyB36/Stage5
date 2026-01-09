@@ -9,7 +9,7 @@ class URLValidator:
         self.field = field
 
     def __call__(self, value):
-        reg = re.compile("youtube\.com")
+        reg = re.compile(r"youtube\.com")
         my_value = dict(value).get(self.field)
         if not my_value:
             return
