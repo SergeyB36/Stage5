@@ -2,12 +2,14 @@ from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from study.models import Course, Lesson
+from study.validators import URLValidator
 
 
 class LessonSerializer(ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ("id", "name", "description", "course")
+        fields = ("id", "name", "description", "course", "url")
+        validators = [URLValidator(field='url')]
 
 
 class CourseSerializer(ModelSerializer):
