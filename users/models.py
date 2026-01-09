@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from config import settings
 from study.models import Course, Lesson
 
 
@@ -67,3 +68,24 @@ class Payments(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+
+class Subscription(models.Model):
+    course = models.ForeignKey(
+        Course, on_delete=models.CASCADE, related_name="subscription_course", verbose_name="Подписка"
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name="Пользователь",
+        related_name="user_subscription",
+        on_delete=models.CASCADE,
+    )
+    is_active = models.BooleanField(default=True, blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+        unique_together = ["user", "course"]
+
+    def __str__(self):
+        return f"Подписка на курс {self.course}"

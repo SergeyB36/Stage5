@@ -12,7 +12,7 @@ from users.views import (
     CustomUserCreateAPIView,
     PaymentsCreateAPIView,
     PaymentsListAPIView,
-    PaymentsRetrieveAPIView,
+    PaymentsRetrieveAPIView, SubscriptionCreateAPIView, SubscriptionDestroyAPIView,
 )
 
 app_name = UsersConfig.name
@@ -25,6 +25,8 @@ urlpatterns = [
     path("login/", TokenObtainPairView.as_view(permission_classes=(AllowAny,)), name="login"),
     path("token/refresh/", TokenRefreshView.as_view(permission_classes=(AllowAny,)), name="token_refresh"),
     path("register/", CustomUserCreateAPIView.as_view(), name="register"),
+    path("subscription/create/", SubscriptionCreateAPIView.as_view(), name="subscription-create"),
+    path("subscription/<int:pk>/delete/", SubscriptionDestroyAPIView.as_view(), name="subscription-delete"),
 ]
 
 

@@ -9,9 +9,9 @@ class URLValidator:
         self.field = field
 
     def __call__(self, value):
-        reg = re.compile('youtube\.com')
+        reg = re.compile("youtube\.com")
         my_value = dict(value).get(self.field)
         if not my_value:
             return
         if not reg.search(str(my_value)):
-            raise ValidationError('Ссылка должна быть только из YouTube')
+            raise ValidationError("Ссылка должна быть только из YouTube")

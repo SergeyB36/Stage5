@@ -9,7 +9,7 @@ class LessonSerializer(ModelSerializer):
     class Meta:
         model = Lesson
         fields = ("id", "name", "description", "course", "url")
-        validators = [URLValidator(field='url')]
+        validators = [URLValidator(field="url")]
 
 
 class CourseSerializer(ModelSerializer):
