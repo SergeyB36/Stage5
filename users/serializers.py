@@ -12,7 +12,7 @@ class CustomUserSerializer(ModelSerializer):
         fields = "__all__"
 
     def get_subscriptions(self, obj):
-        return [sub for sub in obj.user_subscription.all() if sub.is_active is True]
+        return obj.user_subscription.filter(is_active=True)
 
 
 class PaymentsSerializer(ModelSerializer):
