@@ -8,7 +8,7 @@ class IsModerator(BasePermission):
 
 class IsOwnerOrIsModerator(BasePermission):
     def has_permission(self, request, view):
-        user = self.request.user
+        user = request.user
         return user.is_authenticated and (
             user == view.get_object().owner or user.groups.filter(name="Moderator").exists()
         )
@@ -21,5 +21,5 @@ class IsOwner(BasePermission):
 
 class CanCreatePermission(BasePermission):
     def has_permission(self, request, view):
-        user = self.request.user
+        user = request.user
         return user.is_authenticated and not user.groups.filter(name="Moderator").exists()
