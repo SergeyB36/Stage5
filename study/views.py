@@ -27,11 +27,13 @@ class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     pagination_class = MyPaginator
+    permission_classes = [AllowAny]
 
 
 class LessonRetrieveAPIView(RetrieveAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [AllowAny]
 
 
 class LessonUpdateAPIView(UpdateAPIView):

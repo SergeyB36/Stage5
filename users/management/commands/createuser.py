@@ -9,5 +9,5 @@ class Command(BaseCommand):
         user = CustomUser.objects.create(email="user@user.com")
         user.set_password("1234")
         user.save()
-        print(f"Пользователь {user} успешно создан")
-        print(f"Login: '{user}'\nPassword: '1234'")
+        self.stdout.write(self.style.SUCCESS(f"Пользователь {user} успешно создан"))
+        self.stdout.write(self.style.SUCCESS(f"Login: '{user}'\nPassword: '1234'"))
