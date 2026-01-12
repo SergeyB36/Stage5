@@ -1,4 +1,5 @@
 from django.contrib.auth.models import AbstractUser
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from config import settings
@@ -33,13 +34,27 @@ class Payments(models.Model):
     lesson = models.ForeignKey(
         Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Урок"
     )
-    amount = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Сумма оплаты")
-    TYPE_PAYMENT_CHOICES = [
+    OBJECT_TYPE_CHOICES = [
+        ('course', 'Курс'),
+        ('lesson', 'Урок'),
+    ]
+    object_payment = models.CharField(
+        max_length=10,
+        choices=OBJECT_TYPE_CHOICES,
+        verbose_name="Тип объекта оплаты"
+    )
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Сумма оплаты",
+        validators=[MinValueValidator(0.01)]
+    )
+    TYPE_PAYMENT_METHOD = [
         ("cash", "Наличные"),
         ("on_line", "Перевод на счет"),
     ]
-    type_payment = models.CharField(
-        max_length=20, choices=TYPE_PAYMENT_CHOICES, default=None, verbose_name="Способ оплаты"
+    payment_method = models.CharField(
+        max_length=20, choices=TYPE_PAYMENT_METHOD, default=None, verbose_name="Способ оплаты"
     )
 
     class Meta:
@@ -58,13 +73,20 @@ class Payments(models.Model):
         """Валидация модели"""
         from django.core.exceptions import ValidationError
 
-        # Проверяем, что выбран только один объект
+        if self.object_payment == 'course' and not self.course:
+            raise ValidationError("Для типа 'курс' необходимо выбрать курс")
+
+        if self.object_payment == 'lesson' and not self.lesson:
+            raise ValidationError("Для типа 'урок' необходимо выбрать урок")
+
         if self.course and self.lesson:
             raise ValidationError("Выберите только один объект: курс ИЛИ урок")
 
-        if not self.course and not self.lesson:
-            raise ValidationError("Выберите объект для оплаты: курс ИЛИ урок")
+        if self.object_payment == 'course' and self.lesson:
+            raise ValidationError("Тип 'курс', но выбран урок")
 
+        if self.object_payment == 'lesson' and self.course:
+            raise ValidationError("Тип 'урок', но выбран курс")
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
