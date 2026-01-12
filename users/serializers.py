@@ -33,6 +33,8 @@ class PaymentsCreateSerializer(ModelSerializer):
             "lesson",
             "payment_method",
             "object_payment",
+            "session_id",
+            "pyment_link",
         )
 
     def create(self, validated_data):
