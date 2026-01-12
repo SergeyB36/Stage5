@@ -35,19 +35,12 @@ class Payments(models.Model):
         Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="paid_object", verbose_name="Урок"
     )
     OBJECT_TYPE_CHOICES = [
-        ('course', 'Курс'),
-        ('lesson', 'Урок'),
+        ("course", "Курс"),
+        ("lesson", "Урок"),
     ]
-    object_payment = models.CharField(
-        max_length=10,
-        choices=OBJECT_TYPE_CHOICES,
-        verbose_name="Тип объекта оплаты"
-    )
+    object_payment = models.CharField(max_length=10, choices=OBJECT_TYPE_CHOICES, verbose_name="Тип объекта оплаты")
     amount = models.DecimalField(
-        max_digits=10,
-        decimal_places=2,
-        verbose_name="Сумма оплаты",
-        validators=[MinValueValidator(0.01)]
+        max_digits=10, decimal_places=2, verbose_name="Сумма оплаты", validators=[MinValueValidator(0.01)]
     )
     TYPE_PAYMENT_METHOD = [
         ("cash", "Наличные"),
@@ -58,19 +51,11 @@ class Payments(models.Model):
     )
 
     session_id = models.CharField(
-        max_length=255,
-        blank=True,
-        null=True,
-        verbose_name="ID сессии",
-        help_text="Укажите ID сессии"
+        max_length=255, blank=True, null=True, verbose_name="ID сессии", help_text="Укажите ID сессии"
     )
 
     pyment_link = models.URLField(
-        max_length=600,
-        blank=True,
-        null=True,
-        verbose_name="Ссылка на оплату",
-        help_text="Укажите ссылку на оплату"
+        max_length=600, blank=True, null=True, verbose_name="Ссылка на оплату", help_text="Укажите ссылку на оплату"
     )
 
     class Meta:
@@ -89,20 +74,21 @@ class Payments(models.Model):
         """Валидация модели"""
         from django.core.exceptions import ValidationError
 
-        if self.object_payment == 'course' and not self.course:
+        if self.object_payment == "course" and not self.course:
             raise ValidationError("Для типа 'курс' необходимо выбрать курс")
 
-        if self.object_payment == 'lesson' and not self.lesson:
+        if self.object_payment == "lesson" and not self.lesson:
             raise ValidationError("Для типа 'урок' необходимо выбрать урок")
 
         if self.course and self.lesson:
             raise ValidationError("Выберите только один объект: курс ИЛИ урок")
 
-        if self.object_payment == 'course' and self.lesson:
+        if self.object_payment == "course" and self.lesson:
             raise ValidationError("Тип 'курс', но выбран урок")
 
-        if self.object_payment == 'lesson' and self.course:
+        if self.object_payment == "lesson" and self.course:
             raise ValidationError("Тип 'урок', но выбран курс")
+
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)

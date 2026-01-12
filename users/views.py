@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from requests import session
 from rest_framework import status
 from rest_framework.generics import (
     CreateAPIView,
@@ -15,8 +14,9 @@ from study.permissions import CanCreatePermission
 from users.models import CustomUser, Payments, Subscription
 from users.serializers import (
     CustomUserSerializer,
+    PaymentsCreateSerializer,
     PaymentsSerializer,
-    SubscriptionSerializer, PaymentsCreateSerializer,
+    SubscriptionSerializer,
 )
 from users.servicies import create_price, create_session
 
@@ -33,7 +33,6 @@ class PaymentsCreateAPIView(CreateAPIView):
         payment.session_id = session_id
         payment.pyment_link = pyment_link
         payment.save()
-
 
 
 class PaymentsListAPIView(ListAPIView):

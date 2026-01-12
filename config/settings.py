@@ -24,10 +24,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    'drf_yasg',
+    "drf_yasg",
     "rest_framework_simplejwt",
     "django_filters",
-    'corsheaders',
+    "corsheaders",
     "users",
     "study",
 ]
@@ -40,7 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -130,7 +130,7 @@ SIMPLE_JWT = {
 
 # Замените на адрес вашего фронтенд-сервера
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:8000',
+    "http://localhost:8000",
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 
