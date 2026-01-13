@@ -24,10 +24,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
+    "drf_yasg",
+    "rest_framework_simplejwt",
     "django_filters",
+    "corsheaders",
     "users",
     "study",
-    "rest_framework_simplejwt",
 ]
 
 MIDDLEWARE = [
@@ -38,6 +40,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -124,6 +127,14 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
 }
+
+# Замените на адрес вашего фронтенд-сервера
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+]
+CORS_ALLOW_ALL_ORIGINS = True
+
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
 # Раскомментировать для проверки на реальном сервере следующие 7 строк и настроить .env
 # EMAIL_HOST = "smtp.yandex.ru"

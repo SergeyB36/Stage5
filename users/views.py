@@ -6,7 +6,7 @@ from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
 )
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from study.models import Course
@@ -14,14 +14,25 @@ from study.permissions import CanCreatePermission
 from users.models import CustomUser, Payments, Subscription
 from users.serializers import (
     CustomUserSerializer,
+    PaymentsCreateSerializer,
     PaymentsSerializer,
     SubscriptionSerializer,
 )
+from users.servicies import create_price, create_session
 
 
 class PaymentsCreateAPIView(CreateAPIView):
     queryset = Payments.objects.all()
-    serializer_class = PaymentsSerializer
+    serializer_class = PaymentsCreateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        payment = serializer.save(user=self.request.user)
+        amount = create_price(payment.amount)
+        session_id, pyment_link = create_session(amount)
+        payment.session_id = session_id
+        payment.pyment_link = pyment_link
+        payment.save()
 
 
 class PaymentsListAPIView(ListAPIView):

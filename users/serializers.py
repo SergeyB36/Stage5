@@ -9,7 +9,7 @@ class CustomUserSerializer(ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = "__all__"
+        fields = ("id", "email", "avatar", "phone_number", "country", "subscriptions")
 
     def get_subscriptions(self, obj):
         return obj.user_subscription.filter(is_active=True)
@@ -27,10 +27,13 @@ class PaymentsCreateSerializer(ModelSerializer):
         model = Payments
         fields = (
             "user",
-            "payment_amount",
+            "amount",
             "course",
             "lesson",
             "payment_method",
+            "object_payment",
+            "session_id",
+            "pyment_link",
         )
 
     def create(self, validated_data):
@@ -42,9 +45,9 @@ class PaymentsCreateSerializer(ModelSerializer):
         lesson = validated_data.get("lesson")
 
         if course:
-            validated_data["type_payment"] = "course"
+            validated_data["object_payment"] = "course"
         elif lesson:
-            validated_data["type_payment"] = "lesson"
+            validated_data["object_payment"] = "lesson"
 
         return super().create(validated_data)
 
