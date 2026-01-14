@@ -33,8 +33,8 @@ class LessonSerializer(ModelSerializer):
 class LessonUpdateSerializer(ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ["name", "description", "avatar", "url", "updated_at"]
-        read_only_fields = ["owner", "course", "created_at"]
+        fields = ["name", "description", "avatar", "url", "course", "updated_at"]
+        read_only_fields = ["owner", "created_at"]
 
     def update(self, obj, validated_data):
         """Обновление даты изменения"""
