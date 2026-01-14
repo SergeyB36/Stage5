@@ -148,12 +148,12 @@ CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 
 
-# CELERY_BEAT_SCHEDULE = {
-#     'task-name': {
-#         'task': 'study.tasks.my_task',
-#         'schedule': timedelta(days=1),  # Расписание выполнения задачи (например, каждые 10 минут)
-#     },
-# }
+CELERY_BEAT_SCHEDULE = {
+    'task-name': {
+        'task': 'study.tasks.block_user',
+        'schedule': timedelta(days=1),
+    },
+}
 
 # Раскомментировать для проверки на реальном сервере следующие 7 строк и настроить .env
 # EMAIL_HOST = "smtp.yandex.ru"
