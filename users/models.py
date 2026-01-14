@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.utils import timezone
 
 from config import settings
 from study.models import Course, Lesson

@@ -1,5 +1,4 @@
 from django.db import models
-from django.utils import timezone
 
 from config import settings
 
@@ -14,6 +13,7 @@ class Course(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
+
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
@@ -36,6 +36,7 @@ class Lesson(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
+
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"

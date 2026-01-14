@@ -16,11 +16,12 @@ class LessonSerializer(ModelSerializer):
 
     def create(self, validated_data):
         from django.utils import timezone
+
         lesson = Lesson.objects.create(**validated_data)
 
         if lesson.course:
             lesson.course.updated_at = timezone.now()
-            lesson.course.save(update_fields=['updated_at'])
+            lesson.course.save(update_fields=["updated_at"])
 
             # Отправка сообщения об обновлении курса
             email = get_email_subscribes(lesson.course)
@@ -32,12 +33,13 @@ class LessonSerializer(ModelSerializer):
 class LessonUpdateSerializer(ModelSerializer):
     class Meta:
         model = Lesson
-        fields = ['name', 'description', 'avatar', 'url', 'updated_at']
-        read_only_fields = ['owner', 'course', 'created_at']
+        fields = ["name", "description", "avatar", "url", "updated_at"]
+        read_only_fields = ["owner", "course", "created_at"]
 
     def update(self, obj, validated_data):
-        """ Обновление даты изменения """
+        """Обновление даты изменения"""
         from django.utils import timezone
+
         for attr, value in validated_data.items():
             setattr(obj, attr, value)
 
@@ -53,7 +55,6 @@ class LessonUpdateSerializer(ModelSerializer):
         return obj
 
 
-
 class CourseSerializer(ModelSerializer):
     subscribes_count = SerializerMethodField()
     course_lesson_count = SerializerMethodField()
@@ -66,19 +67,25 @@ class CourseSerializer(ModelSerializer):
             "id",
             "name",
             "description",
-            "owner", "course_lesson_count", "lessons", "is_subscribe", "updated_at", "subscribes_count")
+            "owner",
+            "course_lesson_count",
+            "lessons",
+            "is_subscribe",
+            "updated_at",
+            "subscribes_count",
+        )
 
     def get_course_lesson_count(self, obj):
-        """ Количество уроков в курсе """
+        """Количество уроков в курсе"""
         return obj.lessons.count()
 
     def get_is_subscribe(self, obj):
-        """ Функция подписки на курс """
+        """Функция подписки на курс"""
         request = self.context.get("request")
         if not request or not request.user.is_authenticated:
             return False
         return Subscription.objects.filter(user=request.user, course=obj, is_active=True).exists()
 
     def get_subscribes_count(self, obj):
-        """ Получаем количество подписок"""
+        """Получаем количество подписок"""
         return obj.subscription_course.count()
