@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.generics import (
@@ -80,14 +81,16 @@ class SubscriptionCreateAPIView(CreateAPIView):
             http_status = status.HTTP_200_OK
         elif sub_q.exists() and not subscription.is_active:
             subscription.is_active = True
+            subscription.updated_at = timezone.now()
             subscription.save()
             message = "Подписка добавлена"
             http_status = status.HTTP_200_OK
         else:
             subscription = Subscription.objects.create(user=user, course=course)
             subscription.is_active = True
+            subscription.updated_at = timezone.now()
             subscription.save()
-            message = "подписка добавлена"
+            message = "Подписка добавлена"
             http_status = status.HTTP_201_CREATED
         return Response(
             {"message": message},

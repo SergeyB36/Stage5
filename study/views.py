@@ -11,7 +11,7 @@ from rest_framework.viewsets import ModelViewSet
 from study.models import Course, Lesson
 from study.paginators import MyPaginator
 from study.permissions import CanCreatePermission, IsOwner, IsOwnerOrIsModerator
-from study.serializers import CourseSerializer, LessonSerializer
+from study.serializers import CourseSerializer, LessonSerializer, LessonUpdateSerializer
 
 
 class LessonCreateAPIView(CreateAPIView):
@@ -38,7 +38,7 @@ class LessonRetrieveAPIView(RetrieveAPIView):
 
 class LessonUpdateAPIView(UpdateAPIView):
     queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
+    serializer_class = LessonUpdateSerializer
     permission_classes = [IsOwnerOrIsModerator]
 
 
@@ -67,3 +67,6 @@ class CourseViewSet(ModelViewSet):
         if self.action == "destroy":
             permission_classes = [IsOwner]
         return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

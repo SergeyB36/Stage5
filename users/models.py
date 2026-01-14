@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 from config import settings
 from study.models import Course, Lesson
@@ -105,6 +106,8 @@ class Subscription(models.Model):
         on_delete=models.CASCADE,
     )
     is_active = models.BooleanField(default=True, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.TimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Подписка"

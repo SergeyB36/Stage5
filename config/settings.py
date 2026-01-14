@@ -76,6 +76,9 @@ DATABASES = {
 }
 
 REST_FRAMEWORK = {
+    'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
+    'DATE_FORMAT': '%Y-%m-%d',
+    'TIME_FORMAT': '%H:%M',
     "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -137,15 +140,20 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
 
-CELERY_BROKER_URL = 'redis://localhost:6379' # Например, Redis, который по умолчанию работает на порту 6379
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-CELERY_RESULT_BACKEND = 'redis://localhost:6379'
-
-CELERY_TIMEZONE = "Australia/Tasmania"
-
+CELERY_TIMEZONE = TIME_ZONE
 CELERY_TASK_TRACK_STARTED = True
-
 CELERY_TASK_TIME_LIMIT = 30 * 60
+
+
+# CELERY_BEAT_SCHEDULE = {
+#     'task-name': {
+#         'task': 'study.tasks.my_task',
+#         'schedule': timedelta(days=1),  # Расписание выполнения задачи (например, каждые 10 минут)
+#     },
+# }
 
 # Раскомментировать для проверки на реальном сервере следующие 7 строк и настроить .env
 # EMAIL_HOST = "smtp.yandex.ru"
@@ -157,10 +165,10 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 # DEFAULT_FROM_EMAIL = os.getenv("EMAIL_HOST_USER")
 
 # Закомментировать или удалить для проверки на реальном сервере следующие 4 строки
-# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
-# EMAIL_FILE_PATH = os.path.join(BASE_DIR, "tmp", "django-emails")
-# EMAIL_HOST_USER = ""
-# EMAIL_HOST_PASSWORD = ""
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "tmp", "django-emails")
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 
 # CACHES_ENABLED = True
 # if CACHES_ENABLED:

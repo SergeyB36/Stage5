@@ -63,4 +63,6 @@ class SubscriptionSerializer(ModelSerializer):
             "user_email",
             "course_name",
             "is_active",
+            "created_at",
+            "updated_at"
         )

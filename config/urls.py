@@ -10,7 +10,7 @@ schema_view = get_schema_view(
     openapi.Info(
         title="API Documentation",
         default_version="v1",
-        description="Your документация",
+        description="Документация",
         terms_of_service="https://www.example.com/policies/terms/",
         contact=openapi.Contact(email="contact@example.com"),
         license=openapi.License(name="BSD License"),
