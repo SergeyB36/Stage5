@@ -11,13 +11,15 @@ class Course(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name="Владелец ресурса", on_delete=models.CASCADE, null=True, blank=True
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Курс"
         verbose_name_plural = "Курсы"
 
     def __str__(self):
-        return f"{self.name}"
+        return f"Курс '{self.name}'"
 
 
 class Lesson(models.Model):
@@ -32,10 +34,12 @@ class Lesson(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL, verbose_name="Владелец ресурса", on_delete=models.CASCADE, null=True, blank=True
     )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Дата последнего обновления")
 
     class Meta:
         verbose_name = "Урок"
         verbose_name_plural = "Уроки"
 
     def __str__(self):
-        return f"{self.name}"
+        return f"Урок '{self.name}'"

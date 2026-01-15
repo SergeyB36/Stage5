@@ -58,9 +58,4 @@ class SubscriptionSerializer(ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = (
-            "id",
-            "user_email",
-            "course_name",
-            "is_active",
-        )
+        fields = ("id", "user_email", "course_name", "is_active", "created_at", "updated_at")
