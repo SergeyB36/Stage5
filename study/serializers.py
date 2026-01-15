@@ -75,6 +75,8 @@ class CourseSerializer(ModelSerializer):
             "subscribes_count",
         )
 
+    read_only_fields = ["id", "owner", "created_at"]
+
     def get_course_lesson_count(self, obj):
         """Количество уроков в курсе"""
         return obj.lessons.count()

@@ -9,14 +9,6 @@ from config.settings import EMAIL_HOST_USER
 
 
 @shared_task
-def block_user():
-    """Функция блокировки пользователя"""
-    User = get_user_model()
-    three_months_ago = timezone.now() - timedelta(days=90)
-    User.objects.filter(last_login__lt=three_months_ago, is_active=True).update(is_active=False)
-
-
-@shared_task
 def send_info_about_update(email: list, course_id: int):
     """Функция информирования подписчиков об обновлении курса"""
     from study.models import Course
