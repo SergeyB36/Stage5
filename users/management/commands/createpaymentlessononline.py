@@ -14,7 +14,8 @@ class Command(BaseCommand):
             user=user,
             payment_date=timezone.now(),
             amount=2000,
-            type_payment="on_line",
+            payment_method="on_line",
+            object_payment="lesson",
             lesson=lesson,
         )
         payment.save()

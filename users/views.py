@@ -40,7 +40,7 @@ class PaymentsListAPIView(ListAPIView):
     queryset = Payments.objects.all()
     serializer_class = PaymentsSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ["payment_date", "course", "lesson", "type_payment"]
+    filterset_fields = ["payment_date", "course", "lesson", "payment_method", "object_payment"]
 
 
 class PaymentsRetrieveAPIView(RetrieveAPIView):

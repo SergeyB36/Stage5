@@ -54,6 +54,7 @@ class CourseViewSet(ModelViewSet):
     pagination_class = MyPaginator
 
     def get_permissions(self):
+        permission_classes = [AllowAny]
         if self.action == "list":
             permission_classes = [AllowAny]
         if self.action == "create":
