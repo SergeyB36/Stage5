@@ -1,0 +1,26 @@
+FROM python:3.12-bookworm
+
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
+
+WORKDIR /Project4
+
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    libpq-dev \
+    python3-dev \
+    build-essential \
+    postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN pip install --upgrade pip wheel "poetry==2.2.1"
+
+RUN poetry config virtualenvs.create false --local
+
+COPY pyproject.toml poetry.lock ./
+
+COPY . .
+
+RUN poetry install --no-root --no-interaction
+
