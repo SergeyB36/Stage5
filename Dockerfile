@@ -3,7 +3,7 @@ FROM python:3.12-bookworm
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-WORKDIR /Project4
+WORKDIR /Stage5
 
 RUN apt-get update && apt-get install -y \
     gcc \
