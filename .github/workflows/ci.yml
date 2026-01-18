@@ -33,7 +33,7 @@ jobs:
 
       - name: Set up Django environment
         env:
-          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> $GITHUB_ENV
           echo "DB_NAME=test_db" >> $GITHUB_ENV
