@@ -31,10 +31,10 @@ jobs:
 
       - name: Run migrate
         run: |
-        export DATABASE_URL="sqlite:///test_db.sqlite3"
-        mkdir -p static
-        poetry run python manage.py migrate --noinput
-        poetry run python manage.py migrate
+          export DATABASE_URL="sqlite:///test_db.sqlite3"
+          mkdir -p static
+          poetry run python manage.py migrate --noinput
+          poetry run python manage.py migrate
 
       - name: Run tests
         run: poetry run python manage.py test
