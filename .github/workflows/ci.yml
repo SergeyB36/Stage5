@@ -48,9 +48,6 @@ jobs:
         poetry run python -c "
         import os
         os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
-        os.environ['DEBUG'] = 'False'
-        os.environ['SECRET_KEY'] = 'test-key'
-        os.environ['DATABASE_URL'] = 'sqlite:///test_db.sqlite3'
         "
         poetry run python manage.py migrate
 
