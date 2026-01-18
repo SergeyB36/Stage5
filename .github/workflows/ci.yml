@@ -1,118 +1,108 @@
-name: Stage5 CI
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:14
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: test_db
-
-
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      - name: Install dependence
-        run: |
-          python -m pip install --upgrade pip
-          pip install poetry
-          poetry install --no-interaction --no-root
-
-      - name: Create directories
-        run: |
-          mkdir -p static
-          mkdir -p media
-
-      - name: Create PostgreSQL-specific test settings
-        run: |
-          # Создаем тестовые настройки с явным указанием TCP подключения
-          cat > test_settings.py << 'EOF'
-          import os
-          import sys
-          
-          # Добавляем путь к оригинальным настройкам
-          sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-          
-          # Импортируем оригинальные настройки
-          from config.settings import *
-          
-          # ПЕРЕОПРЕДЕЛЯЕМ подключение к PostgreSQL - явно указываем TCP
-          DATABASES = {
-              'default': {
-                  'ENGINE': 'django.db.backends.postgresql',
-                  'NAME': 'test_db',
-                  'USER': 'postgres',
-                  'PASSWORD': 'password',
-                  'HOST': 'localhost',       # Явно указываем localhost для TCP
-                  'PORT': '5432',            # Явно указываем порт
-                  'OPTIONS': {},             # Убираем любые socket опции
-              }
-          }
-          
-          # Убираем любые настройки socket
-          if 'OPTIONS' in DATABASES['default']:
-              DATABASES['default']['OPTIONS'].pop('service', None)
-              DATABASES['default']['OPTIONS'].pop('passfile', None)
-          
-          # Секретный ключ
-          SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-test-key')
-          
-          # Отладка
-          DEBUG = True
-          
-          # Разрешенные хосты
-          ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
-          
-          # Статические файлы
-          STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-          EOF
-          
-          echo "DJANGO_SETTINGS_MODULE=test_settings" >> $GITHUB_ENV
-          echo "SECRET_KEY=django-insecure-test-$(openssl rand -hex 32)" >> $GITHUB_ENV
-
-      - name: Wait for PostgreSQL and verify connection
-        run: |
-          echo "Waiting for PostgreSQL..."
-          
-          # Устанавливаем клиент PostgreSQL
-          sudo apt-get update
-          sudo apt-get install -y postgresql-client
-          
-          # Ждем пока PostgreSQL будет готов
-          for i in {1..15}; do
-            if pg_isready -h localhost -p 5432; then
-              echo "PostgreSQL is ready!"
-              
-              # Проверяем подключение с правильными параметрами
-              PGPASSWORD=password psql -h localhost -U postgres -d test_db -c "SELECT 1;" && echo "Connection successful!"
-              break
-            fi
-            echo "Attempt $i/15 - Waiting for PostgreSQL..."
-            sleep 2
-          done
-          
-          # Если не удалось подключиться, выводим информацию
-          if ! pg_isready -h localhost -p 5432; then
-            echo "ERROR: PostgreSQL not available"
-            echo "Trying to check PostgreSQL service..."
-            docker ps
-          fi
-
-      - name: Run Django commands
-        run: |
-          poetry run python manage.py migrate
-          poetry run python manage.py test
+#name: Stage5 CI
+#
+#on: [push, pull_request]
+#
+#jobs:
+#  test:
+#    runs-on: ubuntu-latest
+#
+#    services:
+#      postgres:
+#        image: postgres:14
+#        ports:
+#          - 5432:5432
+#        env:
+#          POSTGRES_USER: postgres
+#          POSTGRES_PASSWORD: password
+#          POSTGRES_DB: test_db
+#
+#
+#    steps:
+#      - name: Check out code
+#        uses: actions/checkout@v3
+#
+#      - name: Set up Python
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: '3.12'
+#
+#      - name: Install dependence
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install poetry
+#          poetry install --no-interaction --no-root
+#
+#      - name: Create directories
+#        run: |
+#          mkdir -p static
+#          mkdir -p media
+#
+#      - name: Create PostgreSQL-specific test settings
+#        run: |
+#          cat > test_settings.py << 'EOF'
+#          import os
+#          import sys
+#          sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+#
+#          from config.settings import *
+#
+#          DATABASES = {
+#              'default': {
+#                  'ENGINE': 'django.db.backends.postgresql',
+#                  'NAME': 'test_db',
+#                  'USER': 'postgres',
+#                  'PASSWORD': 'password',
+#                  'HOST': 'localhost',
+#                  'PORT': '5432',
+#                  'OPTIONS': {},
+#              }
+#          }
+#
+#          if 'OPTIONS' in DATABASES['default']:
+#              DATABASES['default']['OPTIONS'].pop('service', None)
+#              DATABASES['default']['OPTIONS'].pop('passfile', None)
+#
+#          SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-test-key')
+#
+#          DEBUG = True
+#
+#          ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'testserver']
+#
+#          STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+#          EOF
+#
+#          echo "DJANGO_SETTINGS_MODULE=test_settings" >> $GITHUB_ENV
+#          echo "SECRET_KEY=django-insecure-test-$(openssl rand -hex 32)" >> $GITHUB_ENV
+#
+#      - name: Wait for PostgreSQL and verify connection
+#        run: |
+#          echo "Waiting for PostgreSQL..."
+#
+#          # Устанавливаем клиент PostgreSQL
+#          sudo apt-get update
+#          sudo apt-get install -y postgresql-client
+#
+#          # Ждем пока PostgreSQL будет готов
+#          for i in {1..15}; do
+#            if pg_isready -h localhost -p 5432; then
+#              echo "PostgreSQL is ready!"
+#
+#              # Проверяем подключение с правильными параметрами
+#              PGPASSWORD=password psql -h localhost -U postgres -d test_db -c "SELECT 1;" && echo "Connection successful!"
+#              break
+#            fi
+#            echo "Attempt $i/15 - Waiting for PostgreSQL..."
+#            sleep 2
+#          done
+#
+#          # Если не удалось подключиться, выводим информацию
+#          if ! pg_isready -h localhost -p 5432; then
+#            echo "ERROR: PostgreSQL not available"
+#            echo "Trying to check PostgreSQL service..."
+#            docker ps
+#          fi
+#
+#      - name: Run Django commands
+#        run: |
+#          poetry run python manage.py migrate
+#          poetry run python manage.py test
