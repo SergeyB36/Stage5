@@ -32,9 +32,9 @@ jobs:
           poetry install --no-interaction --no-root
 
       - name: Set up Django environment
-        env:
-          DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
+          echo "SECRET_KEY=django-insecure-test-key-for-ci-$(date +%s)" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=stage5.settings" >> $GITHUB_ENV          
           echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> $GITHUB_ENV
           echo "DB_NAME=test_db" >> $GITHUB_ENV
           echo "DB_USER=postgres" >> $GITHUB_ENV
