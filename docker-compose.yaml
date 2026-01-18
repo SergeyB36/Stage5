@@ -15,16 +15,14 @@ services:
     depends_on:
       - postgres
     env_file:
-      - .env
+      - .env.docker
 
   postgres:
     image: postgres:17
     volumes:
       - postgres_data:/var/lib/postgresql/data
     env_file:
-      - .env
-    environment:
-      - HOST=postgres
+      - .env.docker
     ports:
       - "5432:5432"
   redis:
