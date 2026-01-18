@@ -12,6 +12,7 @@ __pycache__/
 *.DS_Store
 Thumbs.db
 .env
+.env.docker
 .venv/
 venv/
 .env.local
