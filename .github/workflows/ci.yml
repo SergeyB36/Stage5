@@ -21,6 +21,14 @@ jobs:
           pip install poetry
           poetry install --no-interaction --no-root
 
+      - name: Set up Django enveroment
+        env:
+          DJANGO_SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        run:
+          echo "SECRET_KEY=${{ secrets.DJANGO_SECRET_KEY }}" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=stage5.settings" >> $GITHUB_ENV
+          echo "DEBUG=True" >> $GITHUB_ENV
+
       - name: Run migrate
         run: poetry run python manage.py migrate
 
