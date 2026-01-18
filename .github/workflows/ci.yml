@@ -31,20 +31,24 @@ jobs:
           pip install poetry
           poetry install --no-interaction --no-root
 
-      - name: Set up Django environment
+      - name: Setup environment for TCP connection
         run: |
-          echo "SECRET_KEY=django-insecure-test-key-for-ci-$(date +%s)" >> $GITHUB_ENV
-          echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV          
-          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/test_db" >> $GITHUB_ENV
+          mkdir -p static
+          
+          # Явно задаем все параметры подключения
+          echo "SECRET_KEY=django-insecure-test-$(openssl rand -hex 32)" >> $GITHUB_ENV
+          echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV
+          
+          # Эти переменные должны переопределить настройки в вашем config/settings.py
+          echo "DB_ENGINE=django.db.backends.postgresql" >> $GITHUB_ENV
           echo "DB_NAME=test_db" >> $GITHUB_ENV
           echo "DB_USER=postgres" >> $GITHUB_ENV
           echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
-          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_HOST=localhost" >> $GITHUB_ENV  # Важно: localhost для TCP
           echo "DB_PORT=5432" >> $GITHUB_ENV
 
-      - name: Run migrate
-        run:
-          poetry run python manage.py migrate
-
-      - name: Run tests
-        run: poetry run python manage.py test
+          - name: Run Django commands
+            run: |
+              sleep 5
+              poetry run python manage.py migrate --noinput
+              poetry run python manage.py test
