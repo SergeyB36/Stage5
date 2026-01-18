@@ -42,6 +42,10 @@ jobs:
         USER: postgres
         PASSWORD: 6570
         HOST: localhost
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        SECRET_KEY: test-secret-key-for-ci-12345
+        DEBUG: "False"
+        DJANGO_SETTINGS_MODULE: config.settings
       run: poetry run python manage.py migrate
 
     - name: Run tests
@@ -50,6 +54,10 @@ jobs:
         USER: ${{ secrets.POSTGRES_USER }}
         PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         HOST: postgres
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        SECRET_KEY: test-secret-key-for-ci-12345
+        DEBUG: "False"
+        DJANGO_SETTINGS_MODULE: config.settings
       run: poetry run python manage.py test
 
   deploy:
