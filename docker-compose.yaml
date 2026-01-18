@@ -16,6 +16,10 @@ services:
     env_file:
       - .env
     environment:
+      REDIS_HOST: stage5_redis
+      REDIS_PORT: 6379
+      CELERY_BROKER_URL: redis://stage5_redis:6379/0
+      CELERY_RESULT_BACKEND: redis://stage5_redis:6379/0
       HOST: postgres
 
   postgres:
@@ -27,7 +31,7 @@ services:
     env_file:
       - .env
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
       timeout: 3s
       retries: 2
@@ -36,7 +40,7 @@ services:
     image: redis:7-alpine
     container_name: stage5_redis
     ports:
-      - "6379:6379"
+      - "6380:6379"
     command: >
       redis-server
     volumes:
