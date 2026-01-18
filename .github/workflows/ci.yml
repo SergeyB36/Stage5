@@ -79,13 +79,9 @@ jobs:
 
     steps:
       - name: Set up SSH
-        uses: appleboy/ssh-action@v1.0.3
+        uses: webfactory/ssh-agent@v0.9.0
         with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          script: |
-            echo "SSH подключение установлено"
+          ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Copy project files to server
         run: |
