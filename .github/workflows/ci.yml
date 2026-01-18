@@ -20,6 +20,15 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
 
     steps:
     - name: Check out code
@@ -58,6 +67,9 @@ jobs:
         SECRET_KEY: test-secret-key-for-ci-12345
         DEBUG: "False"
         DJANGO_SETTINGS_MODULE: config.settings
+        CELERY_BROKER_URL: redis://localhost:6379/0
+        CELERY_RESULT_BACKEND: redis://localhost:6379/0
+        REDIS_URL: redis://localhost:6379/0
       run: poetry run python manage.py test
 
   deploy:
