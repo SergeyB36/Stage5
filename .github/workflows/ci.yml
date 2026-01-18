@@ -53,7 +53,7 @@ jobs:
         NAME: DjangoStage5
         USER: ${{ secrets.POSTGRES_USER }}
         PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        HOST: postgres
+        HOST: localhost
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
         SECRET_KEY: test-secret-key-for-ci-12345
         DEBUG: "False"
