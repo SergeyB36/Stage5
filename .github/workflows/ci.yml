@@ -35,15 +35,8 @@ jobs:
         run: |
           echo "SECRET_KEY=django-insecure-test-$(openssl rand -hex 32)" >> $GITHUB_ENV
           echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV          
-          echo "DB_ENGINE=django.db.backends.postgresql" >> $GITHUB_ENV
-          echo "DB_NAME=test_db" >> $GITHUB_ENV
-          echo "DB_USER=postgres" >> $GITHUB_ENV
-          echo "DB_PASSWORD=postgres" >> $GITHUB_ENV
-          echo "DB_HOST=localhost" >> $GITHUB_ENV  # Важно: localhost для TCP
-          echo "DB_PORT=5432" >> $GITHUB_ENV
 
       - name: Run Django commands
         run: |
-          sleep 5
-          poetry run python manage.py migrate --noinput
+          poetry run python manage.py migrate
           poetry run python manage.py test
