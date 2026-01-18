@@ -33,13 +33,8 @@ jobs:
 
       - name: Setup environment for TCP connection
         run: |
-          mkdir -p static
-          
-          # Явно задаем все параметры подключения
           echo "SECRET_KEY=django-insecure-test-$(openssl rand -hex 32)" >> $GITHUB_ENV
-          echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV
-          
-          # Эти переменные должны переопределить настройки в вашем config/settings.py
+          echo "DJANGO_SETTINGS_MODULE=config.settings" >> $GITHUB_ENV          
           echo "DB_ENGINE=django.db.backends.postgresql" >> $GITHUB_ENV
           echo "DB_NAME=test_db" >> $GITHUB_ENV
           echo "DB_USER=postgres" >> $GITHUB_ENV
@@ -47,8 +42,8 @@ jobs:
           echo "DB_HOST=localhost" >> $GITHUB_ENV  # Важно: localhost для TCP
           echo "DB_PORT=5432" >> $GITHUB_ENV
 
-          - name: Run Django commands
-            run: |
-              sleep 5
-              poetry run python manage.py migrate --noinput
-              poetry run python manage.py test
+      - name: Run Django commands
+        run: |
+          sleep 5
+          poetry run python manage.py migrate --noinput
+          poetry run python manage.py test
