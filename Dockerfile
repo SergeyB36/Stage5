@@ -18,13 +18,13 @@ COPY pyproject.toml poetry.lock ./
 
 COPY . .
 
-RUN poetry install --no-root --no-interaction
+RUN poetry install --no-root --no-interaction --only main
 
 FROM nginx:latest
 
-COPY nginx.conf /etc/nginx/nginx.conf
+RUN mkdir -p /app/staticfiles
 
-COPY html/ /usr/share/nginx/html/
+COPY nginx.conf /etc/nginx/nginx.conf
 
 EXPOSE 80
 
