@@ -6,8 +6,8 @@ services:
              python manage.py migrate &&
              python manage.py runserver 0.0.0.0:8000"
     volumes:
-      - .:/stage5
-      - static_volume:/Stage5/static
+      - .:/Stage5
+      - static_volume:/Stage5/staticfiles
       - media_volume:/Stage5/media
     ports:
       - "8000:8000"
@@ -41,6 +41,8 @@ services:
       - "5432:5432"
     env_file:
       - .env
+    environment:
+      HOST: postgres
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]
       interval: 5s
@@ -51,7 +53,7 @@ services:
     image: redis:7-alpine
     container_name: redis
     ports:
-      - "6380:6379"
+      - "6379:6379"
     command: >
       redis-server
     volumes:
