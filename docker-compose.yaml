@@ -11,16 +11,28 @@ services:
     ports:
       - "8000:8000"
     depends_on:
+      redis:
       postgres:
         condition: service_healthy
     env_file:
       - .env
     environment:
-      REDIS_HOST: stage5_redis
+      REDIS_HOST: redis
       REDIS_PORT: 6379
-      CELERY_BROKER_URL: redis://stage5_redis:6379/0
-      CELERY_RESULT_BACKEND: redis://stage5_redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_RESULT_BACKEND: redis://redis:6379/0
       HOST: postgres
+
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "80:80"
+    voLumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - static_volume:/app/staticfiles
+    depends_on:
+      - web
 
   postgres:
     image: postgres:17
