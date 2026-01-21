@@ -185,11 +185,21 @@ jobs:
 
       - name: Deploy to server
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ secrets.DEPLOY_DIR }}
-            git fetch origin
-            git checkout develop
-            git pull origin develop
-            docker compose down
-            docker compose up --build -d
-          EOF
+          ssh -o StrictHostKeyChecking=no \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
+            "cd ${{ secrets.DEPLOY_DIR }} && \
+             git remote set-url origin git@github.com:ВАШ_USERNAME/ВАШ_REPO.git && \
+             git fetch origin && \
+             git checkout homework_35+ && \
+             git pull origin homework_35+"
+
+#      - name: Deploy to server
+#        run: |
+#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#            cd ${{ secrets.DEPLOY_DIR }}
+#            git fetch origin
+#            git checkout develop
+#            git pull origin develop
+#            docker compose down
+#            docker compose up --build -d
+#          EOF
