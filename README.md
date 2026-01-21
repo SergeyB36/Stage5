@@ -35,4 +35,5 @@ http://localhost:8000/redoc/ для Redoc.
 Реализованы тесты для CRUD Lesson
 
 ##### Добавлен workflow
-test add 
+test 
+add 
