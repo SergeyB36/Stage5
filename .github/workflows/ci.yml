@@ -181,7 +181,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: |
-            ${{ secrets.SSH_KEY_DEPLOY }}
+            ${{ secrets.SSH_KEY }}
 #
 #      - name: Проверка SSH соединения
 #        run: ssh -T git@github.com || True
