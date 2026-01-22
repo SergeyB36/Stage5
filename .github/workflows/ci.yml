@@ -206,17 +206,17 @@ jobs:
 #
 #      - name: Проверка SSH соединения
 #        run: ssh -T git@github.com
-
-      - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no \
-            -i ~/.ssh/new_key \
-            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
-            "cd ${{ secrets.DEPLOY_DIR }} && \
-             git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
-             git fetch origin && \
-             git checkout homework_35+ && \
-             git pull origin homework_35+"
+#
+#      - name: Deploy to server
+#        run: |
+#          ssh -o StrictHostKeyChecking=no \
+#            -i ~/.ssh/new_key \
+#            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
+#            "cd ${{ secrets.DEPLOY_DIR }} && \
+#             git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
+#             git fetch origin && \
+#             git checkout homework_35+ && \
+#             git pull origin homework_35+"
 
 #      - name: Deploy to server
 #        run: |
@@ -228,3 +228,29 @@ jobs:
 #            docker compose down
 #            docker compose up --build -d
 #          EOF
+      - name: Deploy to server
+        run: |
+          ssh -i ~/.ssh/new_key \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+            # Устанавливаем ключ для GitHub на сервере
+            mkdir -p ~/.ssh
+            echo '${{ secrets.DEPLOY_SSH_KEY }}' > ~/.ssh/github_key
+            chmod 600 ~/.ssh/github_key
+            
+            # Настраиваем SSH для GitHub
+            echo 'Host github.com
+              HostName github.com
+              User git
+              IdentityFile ~/.ssh/github_key
+              IdentitiesOnly yes' > ~/.ssh/config
+            chmod 600 ~/.ssh/config
+            
+            # Добавляем GitHub в known_hosts
+            ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+            
+            # Теперь выполняем деплой
+            cd ${{ secrets.DEPLOY_DIR }} && \
+            git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
+            git fetch origin && \
+            git checkout homework_35+ && \
+            git pull origin homework_35+
