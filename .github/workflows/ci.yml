@@ -182,18 +182,7 @@ jobs:
         with:
           ssh-private-key: |
             ${{ secrets.SSH_KEY }}
-
-#    steps:
-#      - name: Setup SSH
-#        run: |
-#          mkdir -p ~/.ssh
-#          echo "${{ secrets.SECRET_KEY_SERVER }}" > ~/.ssh/id_ed25519_projects
-#          chmod 600 ~/.ssh/id_ed25519_projects
-#          ssh-keyscan github.com >> ~/.ssh/known_hosts
-#
-#          ssh -T git@github.com
-
-
+            ssh -T git@github.com
 
       - name: Deploy to server
         run: |
