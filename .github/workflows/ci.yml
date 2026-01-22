@@ -182,10 +182,9 @@ jobs:
         with:
           ssh-private-key: |
             ${{ secrets.SSH_KEY }}
-
-      - name: Проверка SSH соединения
-        run: ssh -T git@github.com
-
+#
+#      - name: Проверка SSH соединения
+#        run: ssh -T git@github.com
 
       - name: Deploy to server
         run: |
