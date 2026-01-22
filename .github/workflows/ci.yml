@@ -197,7 +197,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no \
-            -i ~/.ssh/server_key \
+            -i ~/.ssh/new_key \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
             "cd ${{ secrets.DEPLOY_DIR }} && \
              git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
