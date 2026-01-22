@@ -188,7 +188,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
             "cd ${{ secrets.DEPLOY_DIR }} && \
-             git remote set-url origin git@github.com:ВАШ_USERNAME/ВАШ_REPO.git && \
+             git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
              git fetch origin && \
              git checkout homework_35+ && \
              git pull origin homework_35+"
