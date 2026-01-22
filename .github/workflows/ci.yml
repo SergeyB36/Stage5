@@ -190,6 +190,19 @@ jobs:
 
           # Добавляем сервер в known_hosts
           ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Debug SSH connection
+        run: |
+          echo "=== Debug ==="
+          echo "Testing SSH key..."
+          ls -la ~/.ssh/
+          echo "Key first line:"
+          head -n 1 ~/.ssh/new_key
+          echo "Trying to connect..."
+          ssh -v -i ~/.ssh/new_key \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
+            "echo 'Test successful'" 2>&1 | tail -20
+
 #
 #      - name: Проверка SSH соединения
 #        run: ssh -T git@github.com
