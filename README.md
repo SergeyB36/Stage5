@@ -34,6 +34,12 @@ http://localhost:8000/redoc/ для Redoc.
 #### Тестирование
 Реализованы тесты для CRUD Lesson
 
-##### Добавлен workflow
-test 
-add 
+## GitHub Actions Workflow
+
+### Триггеры:
+- **При push в любую ветку** (кроме develop) → запускаются только тесты
+- **При pull request в ветку develop** → запускаются тесты + автоматический деплой
+
+### Jobs:
+1. **test** - запуск тестов с PostgreSQL и Redis
+2. **deploy** - автоматический деплой на сервер (только после успешных тестов)
