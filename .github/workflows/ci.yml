@@ -197,7 +197,6 @@ jobs:
              git checkout homework_35+ && \
              git pull origin homework_35+"
 
-
 #      - name: Deploy to server
 #        run: |
 #          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
