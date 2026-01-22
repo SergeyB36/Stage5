@@ -181,7 +181,7 @@ jobs:
         uses: webfactory/ssh-agent@v0.9.0
         with:
           ssh-private-key: |
-            ${{ secrets.SECRET_KEY_SERVER }}
+            ${{ secrets.SSH_KEY }}
 
       - name: Deploy to server
         run: |
@@ -193,13 +193,13 @@ jobs:
              git checkout homework_35+ && \
              git pull origin homework_35+"
 
-      - name: Deploy to server
-        run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd ${{ secrets.DEPLOY_DIR }}
-            git fetch origin
-            git checkout develop
-            git pull origin develop
-            docker compose down
-            docker compose up --build -d
-          EOF
+#      - name: Deploy to server
+#        run: |
+#          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+#            cd ${{ secrets.DEPLOY_DIR }}
+#            git fetch origin
+#            git checkout develop
+#            git pull origin develop
+#            docker compose down
+#            docker compose up --build -d
+#          EOF
