@@ -36,7 +36,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
         ports:
-          - 6380:6379
+          - 6379:6379
 
     steps:
     - name: Check out code
@@ -126,14 +126,35 @@ jobs:
         run: |
           ssh -i ~/.ssh/new_key \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-            # Перезапускаем контейнеры Docker
             cd ${{ secrets.DEPLOY_DIR }} && \
-            echo 'Останавливаем контейнеры...' && \
-            docker-compose down || true && \
-            echo 'Пересобираем образы...' && \
-            docker-compose build --no-cache web || true && \
-            echo 'Запускаем контейнеры...' && \
-            docker-compose up -d && \
-            echo 'Проверяем статус...' && \
-            docker-compose ps && \
-            echo '✅ Сервисы успешно перезапущены'"
+            
+            echo '=== АГРЕССИВНАЯ ОЧИСТКА ПОРТОВ ===' && \
+            
+            # 1. Останавливаем всё, что связано с Redis
+            echo '1. Останавливаем Redis процессы...' && \
+            sudo systemctl stop redis redis-server redis-sentinel 2>/dev/null || true && \
+            sudo pkill -9 -f redis 2>/dev/null || true && \
+            
+            # 2. Освобождаем порты
+            echo '2. Освобождаем порты...' && \
+            for port in 6379 6380 80 8000 5432 5433; do
+              echo \"Освобождаем порт \$port...\" && \
+              sudo fuser -k \${port}/tcp 2>/dev/null || true && \
+              sudo kill -9 \$(sudo lsof -t -i:\${port}) 2>/dev/null || true
+            done
+            
+            # 3. Чистим Docker
+            echo '3. Чистим Docker...' && \
+            docker-compose down --remove-orphans -v 2>/dev/null || docker compose down --remove-orphans -v 2>/dev/null || true && \
+            docker rm -f \$(docker ps -aq) 2>/dev/null || true && \
+            docker network prune -f 2>/dev/null || true && \
+            
+            # 4. Запускаем
+            echo '4. Запускаем контейнеры...' && \
+            docker-compose up -d --build 2>/dev/null || docker compose up -d --build 2>/dev/null && \
+            
+            echo '5. Проверяем...' && \
+            sleep 10 && \
+            docker-compose ps 2>/dev/null || docker compose ps 2>/dev/null && \
+            
+            echo '✅ Готово!'"
