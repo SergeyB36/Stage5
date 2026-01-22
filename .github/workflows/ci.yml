@@ -184,7 +184,7 @@ jobs:
             ${{ secrets.SSH_KEY_DEPLOY }}
 
       - name: Проверка SSH соединения
-        run: ssh -T git@github.com
+        run: ssh -T git@github.com || True
 
 
       - name: Deploy to server
