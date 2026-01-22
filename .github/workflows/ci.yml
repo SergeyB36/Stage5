@@ -125,36 +125,30 @@ jobs:
       - name: Restart services on server
         run: |
           ssh -i ~/.ssh/new_key \
-            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
-            cd ${{ secrets.DEPLOY_DIR }} && \
-            
-            echo '=== АГРЕССИВНАЯ ОЧИСТКА ПОРТОВ ===' && \
-            
-            # 1. Останавливаем всё, что связано с Redis
-            echo '1. Останавливаем Redis процессы...' && \
-            sudo systemctl stop redis redis-server redis-sentinel 2>/dev/null || true && \
-            sudo pkill -9 -f redis 2>/dev/null || true && \
-            
-            # 2. Освобождаем порты
-            echo '2. Освобождаем порты...' && \
-            for port in 6379 6380 80 8000 5432 5433; do
-              echo \"Освобождаем порт \$port...\" && \
-              sudo fuser -k \${port}/tcp 2>/dev/null || true && \
-              sudo kill -9 \$(sudo lsof -t -i:\${port}) 2>/dev/null || true
-            done
-            
-            # 3. Чистим Docker
-            echo '3. Чистим Docker...' && \
-            docker-compose down --remove-orphans -v 2>/dev/null || docker compose down --remove-orphans -v 2>/dev/null || true && \
-            docker rm -f \$(docker ps -aq) 2>/dev/null || true && \
-            docker network prune -f 2>/dev/null || true && \
-            
-            # 4. Запускаем
-            echo '4. Запускаем контейнеры...' && \
-            docker-compose up -d --build 2>/dev/null || docker compose up -d --build 2>/dev/null && \
-            
-            echo '5. Проверяем...' && \
-            sleep 10 && \
-            docker-compose ps 2>/dev/null || docker compose ps 2>/dev/null && \
-            
-            echo '✅ Готово!'"
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e  # Выход при ошибке
+            cd ${{ secrets.DEPLOY_DIR }}
+          
+            echo "=== Начинаем перезапуск ==="
+          
+            # 1. Просто останавливаем ВСЕ контейнеры
+            echo "1. Останавливаем контейнеры..."
+            docker-compose down 2>/dev/null || docker compose down 2>/dev/null || true
+          
+            # 2. Убиваем процессы на порту 6379
+            echo "2. Освобождаем порт 6379..."
+            sudo fuser -k 6379/tcp 2>/dev/null || true
+          
+            # 3. Запускаем контейнеры
+            echo "3. Запускаем контейнеры..."
+            docker-compose up -d 2>/dev/null || docker compose up -d 2>/dev/null
+          
+            # 4. Ждем и проверяем
+            echo "4. Ждем запуска..."
+            sleep 10
+          
+            echo "5. Проверяем статус..."
+            docker-compose ps 2>/dev/null || docker compose ps 2>/dev/null
+          
+            echo "✅ Деплой завершен успешно!"
+          EOF
