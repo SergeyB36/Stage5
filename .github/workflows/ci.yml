@@ -185,8 +185,8 @@ jobs:
       - name: Setup server SSH key
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/server_key
-          chmod 600 ~/.ssh/server_key
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/new_key
+          chmod 600 ~/.ssh/new_key
 
           # Добавляем сервер в known_hosts
           ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
@@ -197,6 +197,7 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no \
+            -i ~/.ssh/server_key \
             ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} \
             "cd ${{ secrets.DEPLOY_DIR }} && \
              git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
