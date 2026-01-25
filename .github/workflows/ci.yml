@@ -1,0 +1,154 @@
+name: Stage5CI
+
+on:
+  push:  # При push запускаем только тесты
+    branches:
+      - '**'  # Все ветки
+      - '!develop'  # Исключаем develop (для него отдельный триггер)
+
+  pull_request:  # При pull_request запускаем тесты + деплой
+    branches:
+      - develop
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: DjangoStage5
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install --no-interaction --no-root
+
+    - name: Run migrations
+      env:
+        NAME: DjangoStage5
+        USER: postgres
+        PASSWORD: 6570
+        HOST: localhost
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        SECRET_KEY: test-secret-key-for-ci-12345
+        DEBUG: "False"
+        DJANGO_SETTINGS_MODULE: config.settings
+      run: poetry run python manage.py migrate
+
+    - name: Run tests
+      env:
+        NAME: DjangoStage5
+        USER: ${{ secrets.POSTGRES_USER }}
+        PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        HOST: localhost
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test_db
+        SECRET_KEY: test-secret-key-for-ci-12345
+        DEBUG: "False"
+        DJANGO_SETTINGS_MODULE: config.settings
+        CELERY_BROKER_URL: redis://localhost:6379/0
+        CELERY_RESULT_BACKEND: redis://localhost:6379/0
+        REDIS_URL: redis://localhost:6379/0
+      run: poetry run python manage.py test
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    needs: test
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop'
+
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.DEPLOY_SSH_KEY }}
+      - name: Setup server SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/new_key
+          chmod 600 ~/.ssh/new_key
+
+          ssh-keyscan ${{ secrets.SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Deploy to server
+        run: |
+          ssh -i ~/.ssh/new_key \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} "
+            mkdir -p ~/.ssh
+            echo '${{ secrets.DEPLOY_SSH_KEY }}' > ~/.ssh/github_key
+            chmod 600 ~/.ssh/github_key
+            
+            echo 'Host github.com
+              HostName github.com
+              User git
+              IdentityFile ~/.ssh/github_key
+              IdentitiesOnly yes' > ~/.ssh/config
+            chmod 600 ~/.ssh/config
+            
+            ssh-keyscan github.com >> ~/.ssh/known_hosts 2>/dev/null
+            
+            cd ${{ secrets.DEPLOY_DIR }} && \
+            git remote set-url origin git@github.com:SergeyB36/Stage5.git && \
+            git fetch origin && \
+            git checkout develop && \
+            git pull origin develop"
+      - name: Restart services on server
+        run: |
+          ssh -i ~/.ssh/new_key \
+            ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+            set -e  # Выход при ошибке
+            cd ${{ secrets.DEPLOY_DIR }}
+          
+            echo "=== Начинаем перезапуск ==="
+          
+            # 1. Просто останавливаем ВСЕ контейнеры
+            echo "1. Останавливаем контейнеры..."
+            docker-compose down 2>/dev/null || docker compose down 2>/dev/null || true
+          
+            # 2. Убиваем процессы на порту 6379
+            echo "2. Освобождаем порт 6379..."
+            sudo fuser -k 6379/tcp 2>/dev/null || true
+          
+            # 3. Запускаем контейнеры
+            echo "3. Запускаем контейнеры..."
+            docker-compose up -d 2>/dev/null || docker compose up -d 2>/dev/null
+          
+            # 4. Ждем и проверяем
+            echo "4. Ждем запуска..."
+            sleep 10
+          
+            echo "5. Проверяем статус..."
+            docker-compose ps 2>/dev/null || docker compose ps 2>/dev/null
+          
+            echo "✅ Деплой завершен успешно!"
+          EOF
